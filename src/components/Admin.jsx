@@ -16,10 +16,13 @@ import esaveLogo from "../images/esave-logo-light.png";
 import loginIcon from "../images/login.png";
 
 // ========================= COMPONENT IMPORTS =========================
-import Admin_Dashboard from "./Admin_Dashboard";
-import Admin_UserManagement from "./Admin_UserManagement";
-import Admin_Activities from "./Admin_Activities";
-import Admin_Rewards from "./Admin_Rewards";
+import AdminDashboard from "./Admin_Dashboard";
+import AdminUserManagement from "./Admin_UserManagement";
+import AdminActivities from "./Admin_Activities";
+import AdminRewards from "./Admin_Rewards";
+import AdminRedeem from "./Admin_Redeem";
+import AdminTransactions from "./Admin_Transactions";
+
 
 // ========================= NAVIGATION ITEMS =========================
 // Each item has an ID (used for navigation), label, and two icon versions (default & active)
@@ -28,6 +31,8 @@ const navItems = [
   { id: "users", label: "USERS", icons: [user1, user2] },
   { id: "activities", label: "ACTIVITIES", icons: [activity1, activity2] },
   { id: "rewards", label: "REWARDS", icons: [reward1, reward2] },
+  { id: "redeem", label: "REDEEM", icons: [reward1, reward2] }, 
+  { id: "transactions", label: "TRANSACTIONS", icons: [activity1, activity2] }, 
 ];
 
 // ========================= MAIN ADMIN COMPONENT =========================
@@ -57,15 +62,19 @@ const Admin = () => {
   const renderContent = () => {
     switch (active) {
       case "dashboard":
-        return <Admin_Dashboard setActive={goToSection} />; // Pass setActive so child can navigate
+        return <AdminDashboard setActive={goToSection} />; // Pass setActive so child can navigate
       case "users":
-        return <Admin_UserManagement setActive={goToSection} />;
+        return <AdminUserManagement setActive={goToSection} />;
       case "activities":
-        return <Admin_Activities setActive={goToSection} />;
+        return <AdminActivities setActive={goToSection} />;
       case "rewards":
-        return <Admin_Rewards setActive={goToSection} />;
+        return <AdminRewards setActive={goToSection} />;
+      case "redeem":
+        return <AdminRedeem />; 
+      case "transactions":
+        return <AdminTransactions />; 
       default:
-        return <Admin_Dashboard setActive={goToSection} />;
+        return <AdminDashboard setActive={goToSection} />;
     }
   };
 

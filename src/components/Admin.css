@@ -265,6 +265,42 @@ html, body, #root {
   color: #0C3C01;
   margin-top: 20px;
 }
+/* === THIRD ROW (TOP USERS) === */
+.top-users-row {
+  margin-top: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.top-users-row .card {
+  flex: 1;
+  min-width: 320px;
+}
+
+.table-header-row,
+.table-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.table-header-row {
+  font-weight: 600;
+  color: #2a4a1c;
+  border-bottom: 1px solid #cfd6c5;
+}
+
+.table-row {
+  border-bottom: 1px solid #e2e6dd;
+  color: #374b2b;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
 
 /* ========================= USER MANAGEMENT JSX ========================= */
 
@@ -841,3 +877,387 @@ html, body, #root {
     font-size: 0.9rem;
   }
 }
+
+/* ===== GENERAL LAYOUT ===== */
+.reward-catalog-container {
+  font-family: "Poppins", sans-serif;
+  background-color: #f3f5ef;
+  min-height: 100vh;
+  padding: 30px 40px;
+  color: #1b3d0f;
+}
+
+.reward-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.reward-header h2 {
+  font-weight: 600;
+  color: #1b3d0f;
+  font-size: 20px;
+}
+
+.reward-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.add-btn {
+  background-color: transparent;
+  border: 1px solid #6a8f57;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #375b2f;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.add-btn:hover {
+  background-color: #6a8f57;
+  color: #fff;
+}
+
+.search-input {
+  border: 1px solid #b5c4a8;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  width: 220px;
+  background-color: #f9fbf6;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #60824d;
+}
+
+/* ===== TABLE ===== */
+.reward-table-wrapper {
+  background-color: #e7ecde;
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.reward-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 650px;
+}
+
+.reward-table thead {
+  background-color: #dce3d2;
+  text-align: left;
+}
+
+.reward-table th,
+.reward-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #cfd6c5;
+}
+
+.reward-table th {
+  font-weight: 600;
+  color: #2a4a1c;
+  font-size: 13px;
+}
+
+.reward-table td {
+  color: #374b2b;
+  vertical-align: middle;
+}
+
+.no-thumb {
+  background-color: #c8d4bb;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  padding: 8px;
+  border-radius: 5px;
+  width: 70px;
+}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-switch {
+  display: flex;
+  gap: 5px;
+}
+
+.toggle-btn {
+  border: none;
+  font-size: 12px;
+  border-radius: 12px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.toggle-btn.on {
+  background-color: #4f7c3f;
+  color: white;
+}
+
+.toggle-btn.off {
+  background-color: #c1c9bc;
+  color: #415e39;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-btn {
+  background: none;
+  border: none;
+  color: #3b5c32;
+  margin-right: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: color 0.2s;
+}
+
+.action-btn:hover {
+  text-decoration: underline;
+  color: #27411f;
+}
+
+.action-btn.delete {
+  color: #9b2727;
+}
+
+.action-btn.delete:hover {
+  text-decoration: underline;
+  color: #6f1717;
+}
+
+/* ===== MODALS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popUp {
+  from { transform: translateY(20px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(52, 68, 52, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 15px;
+  animation: fadeIn 0.25s ease-in-out;
+  overflow-y: auto; 
+}
+
+.modal-card {
+  background: #f7f8f3;
+  border-radius: 12px;
+  width: 420px;
+  padding: 25px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  animation: popUp 0.25s ease-in-out;
+  max-height: 90vh; 
+  overflow-y: auto; 
+}
+
+.modal-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #1d3c1a;
+  position: sticky;
+  top: 0;
+  background: #f7f8f3;
+  padding-top: 5px;
+  z-index: 10;
+}
+
+.modal-body {
+  font-size: 14px;
+  color: #2c4125;
+  margin-bottom: 15px;
+}
+
+.modal-body p {
+  margin: 8px 0;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  position: sticky;
+  bottom: 0;
+  background: #f7f8f3;
+  padding-top: 10px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background-color: #cfd8c5;
+  color: #24351f;
+}
+
+.btn-danger {
+  background-color: #a94444;
+  color: #fff;
+}
+
+.btn-primary {
+  background-color: #4f7c3f;
+  color: #fff;
+}
+
+/* ===== FORM INSIDE MODALS ===== */
+.form-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  color: #2e4925;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  margin-top: 4px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #b8c7ae;
+  font-size: 13px;
+  background-color: #f9fbf6;
+  resize: none;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+  border-color: #4f7c3f;
+  outline: none;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .reward-catalog-container {
+    padding: 20px;
+  }
+
+  .reward-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .reward-header h2 {
+    font-size: 18px;
+  }
+
+  .reward-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .reward-table th,
+  .reward-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .modal-card {
+    width: 90%;
+    max-height: 85vh;
+  }
+}
+
+/* Mobile Phones */
+@media (max-width: 480px) {
+  .reward-catalog-container {
+    padding: 15px;
+  }
+
+  .reward-header h2 {
+    font-size: 16px;
+  }
+
+  .add-btn {
+    font-size: 13px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .reward-table-wrapper {
+    border-radius: 6px;
+  }
+
+  .reward-table {
+    font-size: 12px;
+    min-width: 500px;
+  }
+
+  .toggle-btn {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  .action-btn {
+    font-size: 12px;
+  }
+
+  .modal-card {
+    padding: 18px;
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .btn {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .form-grid label {
+    font-size: 12px;
+  }
+}
+
