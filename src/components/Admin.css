@@ -582,99 +582,136 @@ html, body, #root {
   background: #A2AC82;
   color: #fff;
 }
-
+/* 
 .ellipsis-menu .remove-option {
-  color: #9B2C2C;
-  font-weight: 800;
-}
+  color:  #0C3C01;
+  font-weight: 700;
+} */
 
 @media (max-width: 480px) {
   .ellipsis-menu { right: 2px; min-width: 120px; }
 }
-
-/* Modal */
+/* ========================= MODAL FIX ========================= */
 .modal-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 200;
+  padding: 20px;
 }
 
 .modal-card {
-  background: #fff;
+  background: #f9faf8;
   color: #0C3C01;
-  padding: 18px;
-  border-radius: 8px;
-  width: 560px;
-  max-width: calc(100% - 32px);
-  max-height: calc(100vh - 96px);
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  max-width: 420px; /* Narrow vertical layout */
+  max-height: 90vh; /* Scrollable area */
+  overflow-y: auto;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.modal-card h3 {
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.modal-body {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.22);
-}
-
-.modal-actions {
-  display: flex;
   gap: 10px;
-  justify-content: flex-end;
-  margin-top: 12px;
 }
 
-.modal-body {
-  overflow: auto;
-  padding-right: 6px; /* room for scrollbar */
-}
-
-.modal-body {
-  /* allow the body to grow/shrink inside modal-card so actions stay pinned */
-  flex: 1 1 auto;
-}
-
-.modal-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px 18px;
-  align-items: start;
+.modal-val {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.95rem;
+  word-break: break-word;
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px 14px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .form-grid label {
   display: flex;
   flex-direction: column;
-  font-weight: 700;
-  color: #0C3C01;
-  font-size: 0.88rem;
-}
-
-.form-grid input[type="text"],
-.form-grid input[type="email"],
-.form-grid input[readonly],
-.form-grid input {
-  margin-top: 6px;
-  padding: 8px 10px;
-  border: 1px solid #C9D0BC;
-  border-radius: 6px;
-  background: #FBFDF8;
-  color: #0C3C01;
   font-weight: 600;
+  color: #0C3C01;
+  font-size: 0.9rem;
 }
 
-.modal-card .modal-actions {
-  margin-top: 14px;
+.form-grid input {
+  margin-top: 4px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #0C3C01;
+  font-size: 0.9rem;
+}
+
+/* Scrollbar styling */
+.modal-card::-webkit-scrollbar {
+  width: 8px;
+}
+.modal-card::-webkit-scrollbar-thumb {
+  background: #A2AC82;
+  border-radius: 6px;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  justify-content: right;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  background: #0C3C01;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.btn:hover {
+  background: #0C3C01;
+}
+
+.btn-secondary {
+  background: #A2AC82;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: #0C3C01;
 }
 
 .btn-danger {
-  background: #9B2C2C;
+  background: #B41F1F;
   color: #fff;
+}
+
+.btn-danger:hover {
+  background: #941818;
 }
 
 .btn {
@@ -685,12 +722,47 @@ html, body, #root {
   border-radius: 6px;
   cursor: pointer;
 }
-
+/* 
 .btn-secondary {
   background: transparent;
   border: 1px solid #B5BBA5;
   color: #0C3C01;
+} */
+
+/* ========================= RECENT ACTIVITIES JSX ========================= */
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e4d1e;
+  margin-bottom: 10px;
 }
+
+.activity-container {
+  /* border: 2px solid #4b805d; */
+  background-color: #F1F2ED;
+  border-radius: 5px;
+  padding: 10px 15px;
+}
+
+.activity-row {
+  background-color: #F1F2ED;
+  border-bottom: 1px solid #c1d8c1;
+  padding: 15px 15px;
+ 
+  font-size: 0.95rem;
+}
+
+.activity-row:last-child {
+  border-bottom: none;
+}
+
+.activity-row p {
+  margin: 0;
+  color: #2a3d2a;
+  line-height: 1.4;
+}
+
 
 /* Responsiveness */
 @media (max-width: 920px) {

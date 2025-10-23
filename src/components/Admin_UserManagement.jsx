@@ -306,7 +306,7 @@ function Admin_UserManagement() {
                   {openMenuIndex === index && (
                     <div className="ellipsis-menu" role="menu">
                       <button type="button" onClick={() => handleView(student)}>View Details</button>
-                      <button type="button" className="remove-option" onClick={() => handleRemove(student)}>Remove</button>
+                      <button type="button" onClick={() => handleRemove(student)}>Remove</button>
                     </div>
                   )}
                 </td>

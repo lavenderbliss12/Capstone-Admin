@@ -30,15 +30,30 @@ function Admin_Dashboard({ setActive }) {
     { name: "Available", value: 30 },
   ];
 
+  const studentCollections = [
+    { id: "202510177", name: "John Doe", points: 0.1 },
+    { id: "202510155", name: "Jane Smith", points: 30 },
+    { id: "202510100", name: "Jean Do", points: 0.35 },
+    { id: "202510199", name: "Mikaela Cruz", points: 20 },
+  ];
+
+  const recentActivities = [
+    "The waste bin’s capacity has reached its maximum limit. Please initiate a pickup immediately.",
+    "Runehart, Aiden Laurenzo Kurt successfully claimed their rewards.",
+    "Maria Santos claimed her eco points rewards.",
+    "John Doe contributed biodegradable waste to Bin #3.",
+  ];
+
   const COLORS = ["#0C3C01", "#A2AC82"];
 
   return (
     <div className="dashboard-container-inner">
       <h2 className="welcome-text">Welcome, Administrator!</h2>
 
-      {/* MAIN BODY  */}
       {/* === TOP ROW === */}
       <div className="top-row">
+
+        {/* ========================= REGISTERED STUDENTS ========================= */}
         <div className="card">
           <h3 className="card-title">Registered Users</h3>
           <div className="user-body">
@@ -47,6 +62,9 @@ function Admin_Dashboard({ setActive }) {
           </div>
         </div>
 
+
+
+      {/* ========================= BAR GRAPH STUDENT CONTRIBUTES  ========================= */}
         <div className="card">
           <h3 className="card-title">Student Contributes</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -59,6 +77,9 @@ function Admin_Dashboard({ setActive }) {
           </ResponsiveContainer>
         </div>
 
+
+
+        {/* ========================= WASTE STATUS ULTRASONIC SENSOR  ========================= */}
         <div className="card">
           <h3 className="card-title">Waste Status</h3>
           <div className="pie-body">
@@ -84,16 +105,16 @@ function Admin_Dashboard({ setActive }) {
         </div>
       </div>
 
+
+
+
       {/* === SECOND ROW === */}
       <div className="second-row">
-        {/* STUDENT COLLECTIONS */}
+        {/* ========================= STUDENT COLLECTIONS ========================= */}
         <div className="card">
           <div className="card-title-row">
             <h3 className="card-title">Student Collections</h3>
-            <button
-              className="see-all-btn"
-              onClick={() => setActive("users")}
-            >
+            <button className="see-all-btn" onClick={() => setActive("users")}>
               See More
             </button>
           </div>
@@ -102,47 +123,36 @@ function Admin_Dashboard({ setActive }) {
             <span>Name</span>
             <span>Points</span>
           </div>
-          <div className="table-row">
-            <span>202510177</span>
-            <span>John Doe</span>
-            <span>0.1</span>
-          </div>
-          <div className="table-row">
-            <span>202510155</span>
-            <span>Jane Smith</span>
-            <span>30</span>
-          </div>
-          <div className="table-row">
-            <span>202510100</span>
-            <span>Jean Do</span>
-            <span>0.35</span>
-          </div>
+          {/* Show only 3 rows */}
+          {studentCollections.slice(0, 3).map((student, index) => (
+            <div className="table-row" key={index}>
+              <span>{student.id}</span>
+              <span>{student.name}</span>
+              <span>{student.points}</span>
+            </div>
+          ))}
         </div>
 
-        {/* RECENT ACTIVITIES */}
+
+
+        {/* ========================= RECENT ACTIVITIES ========================= */}
         <div className="card card-activities">
           <div className="card-title-row">
             <h3 className="card-title">Recent Activities</h3>
             <button
-              className="see-all-btn"
-              onClick={() => setActive("activities")}
-            >
-              See More
-            </button>
+            className="see-all-btn"
+            onClick={() => setActive("activities")}
+          >
+            See More
+          </button>
           </div>
           <hr className="activity-line" />
-          <div className="activity-texts">
-            <p>The bin is full! Please collect the bin.</p>
-          </div>
-          <div className="activity-texts">
-            <p>username010 claimed their rewards.</p>
-          </div>
-          <div className="activity-texts">
-            <p>username011 claimed their rewards.</p>
-          </div>
-          <div className="activity-texts">
-            <p>username002 claimed their rewards.</p>
-          </div>
+          {/* Limit to 3 notifications */}
+          {recentActivities.slice(0, 3).map((activity, index) => (
+            <div className="activity-texts" key={index}>
+              <p>{activity}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -150,6 +160,4 @@ function Admin_Dashboard({ setActive }) {
 }
 
 export default Admin_Dashboard;
-
-
 
