@@ -702,7 +702,7 @@ html, body, #root {
 }
 
 .btn-secondary:hover {
-  background: #0C3C01;
+  background: #072501;
 }
 
 .btn-danger {
@@ -714,16 +714,15 @@ html, body, #root {
   background: #941818;
 }
 
-.btn {
+/* .btn {
   background: #5B6D49;
   color: #F1F2ED;
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-}
-/* 
-.btn-secondary {
+} */
+/* .btn-secondary {
   background: transparent;
   border: 1px solid #B5BBA5;
   color: #0C3C01;
@@ -732,7 +731,7 @@ html, body, #root {
 /* ========================= RECENT ACTIVITIES JSX ========================= */
 
 .section-title {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #1e4d1e;
   margin-bottom: 10px;
@@ -764,7 +763,370 @@ html, body, #root {
 }
 
 
+/* ========================= REWARD JSX ========================= */
+
+.reward-catalog-container {
+  font-family: "Poppins", sans-serif;
+  background-color: #f3f5ef;
+  min-height: 100vh;
+  padding: 30px 40px;
+  color: #1b3d0f;
+}
+
+.user-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0C3C01;
+}
+
+ 
+.reward-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky; /* stays at the top */
+  top: 0;
+  z-index: 10;
+  background: #F1F2ED;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.reward-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* space between input and button */
+}
+/*
+.reward-header{
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0C3C01;
+
+} */
+
+
+.search-input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.add-btn {
+  padding: 0.5rem 1rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background-color: #0C3C01;
+}
+.search-input:focus {
+  border-color: #60824d;
+}
+
+/* ===== TABLE REWARD ===== */
+.reward-table-wrapper {
+  flex: 1;
+  overflow: auto;
+  background: #EFF2E6;
+  border-radius: 8px;
+  border: 1px solid #B5BBA5;
+  max-height: calc(100vh - 230px);
+  margin-top: 10px;
+  padding: 8px;
+}
+
+.reward-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 650px;
+}
+
+.reward-table thead {
+  background-color: #dce3d2;
+  text-align: left;
+}
+
+.reward-table th,
+.reward-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #cfd6c5;
+}
+
+.reward-table th {
+  font-weight: 600;
+  color: #2a4a1c;
+  font-size: 13px;
+}
+
+.reward-table td {
+  color: #374b2b;
+  vertical-align: middle;
+}
+
+.no-thumb {
+  background-color: #c8d4bb;
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  padding: 8px;
+  border-radius: 5px;
+  width: 70px;
+}
+
+/* ===== TOGGLE SWITCH ===== */
+.toggle-switch {
+  display: flex;
+  gap: 5px;
+}
+
+.toggle-btn {
+  border: none;
+  font-size: 12px;
+  border-radius: 12px;
+  padding: 5px 15px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.toggle-btn.on {
+  background-color: #0c3c01;
+  color: #B5BBA5;
+  
+}
+
+.toggle-btn.off {
+  background-color: #B5BBA5;
+  color: #0c3c01;
+  
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-btn {
+  padding: 6px 12px;
+  margin: 0 4px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #fff;
+  transition: background 0.2s ease;
+}
+
+/* Green buttons (view, edit) */
+.action-btn:not(.delete) {
+  background-color: #0C3C01;
+}
+
+.action-btn:not(.delete):hover {
+  background-color: #072501;
+}
+
+/* Red button (delete) */
+.action-btn.delete {
+  background-color: #B41F1F;
+}
+
+.action-btn.delete:hover {
+  background-color: #941818;
+}
+
+.reward-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(52, 68, 52, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 15px;
+  animation: rewardFadeIn 0.25s ease-in-out;
+  overflow-y: auto; 
+}
+
+.reward-modal-card {
+  background: #f7f8f3;
+  border-radius: 12px;
+  width: 420px;
+  padding: 25px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  animation: rewardPopUp 0.25s ease-in-out;
+  max-height: 90vh; 
+  overflow-y: auto; 
+}
+
+.reward-modal-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #1d3c1a;
+  position: sticky;
+  top: 0;
+  background: #f7f8f3;
+  padding-top: 5px;
+  z-index: 10;
+}
+
+.reward-modal-body {
+  font-size: 14px;
+  color: #2c4125;
+  margin-bottom: 15px;
+}
+
+.reward-modal-body p {
+  margin: 8px 0;
+}
+
+.reward-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  position: sticky;
+  bottom: 0;
+  background: #f7f8f3;
+  padding-top: 10px;
+}
+
+/* ===== REWARD MODAL BUTTONS ===== */
+.reward-btn {
+  background: #0C3C01;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.reward-btn:hover {
+  background: #0c3c01;
+}
+
+.reward-btn-secondary {
+  background-color: #a2ac82;
+  color: #fff;
+}
+
+.reward-btn-danger {
+  background-color: #a94444;
+  color: #fff;
+}
+
+.reward-btn-primary {
+  background-color: #4f7c3f;
+  color: #fff;
+}
+
+/* ===== FORM INSIDE REWARD MODALS ===== */
+.reward-form-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.reward-form-grid label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  color: #2e4925;
+}
+
+.reward-form-grid input,
+.reward-form-grid select,
+.reward-form-grid textarea {
+  margin-top: 4px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #b8c7ae;
+  font-size: 13px;
+  background-color: #f9fbf6;
+  resize: none;
+}
+
+.reward-form-grid input:focus,
+.reward-form-grid select:focus,
+.reward-form-grid textarea:focus {
+  border-color: #4f7c3f;
+  outline: none;
+}
+
+/* ========================= TRANSACTION JSX  ========================= */
+/* ===== TRANSACTION TABLE ===== */
+.transaction-container {
+  padding: 24px;
+  font-family: 'poppins', sans-serif;
+  background-color: #f7faf5;
+  color: #2e3b2f;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #2e3b2f;
+}
+
+.table-wrapper {
+  background: #f9fcf7;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #2e3b2f;
+}
+
+.transaction-table th {
+  background-color: #dfe8d9;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 18px;
+  font-size: 15px;
+}
+
+.transaction-table td {
+  padding: 12px 18px;
+  font-size: 14px;
+  border-bottom: 1px solid #e9f0e3;
+}
+
+.transaction-table tr:hover {
+  background-color: #f2f7ee;
+}
+
+.view-btn {
+  color: #1a4d1a;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: color 0.2s;
+}
+
+.view-btn:hover {
+  color: #2c6b2c;
+}
+
+
+
+
 /* Responsiveness */
+
 @media (max-width: 920px) {
   .user-management-container {
     max-width: 900px;
@@ -817,8 +1179,42 @@ html, body, #root {
   .user-table-wrapper {
     max-height: calc(100vh - 300px);
   }
-}
 
+  .reward-catalog-container {
+    padding: 20px;
+  }
+
+  .reward-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .reward-header h2 {
+    font-size: 18px;
+  }
+
+  .reward-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .reward-table th,
+  .reward-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .modal-card {
+    width: 90%;
+    max-height: 85vh;
+  }
+}
 /* Make modal grids single-column on small screens */
 @media (max-width: 560px) {
   .modal-grid,
@@ -840,4 +1236,72 @@ html, body, #root {
   .register-btn .register-btn {
     font-size: 0.9rem;
   }
+
+  .reward-catalog-container {
+    padding: 15px;
+  }
+
+  .reward-header h2 {
+    font-size: 16px;
+  }
+
+  .add-btn {
+    font-size: 13px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .reward-table-wrapper {
+    border-radius: 6px;
+  }
+
+  .reward-table {
+    font-size: 12px;
+    min-width: 500px;
+  }
+
+  .toggle-btn {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  .action-btn {
+    font-size: 12px;
+  }
+
+  .modal-card {
+    padding: 18px;
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .btn {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .form-grid label {
+    font-size: 12px;
+  }
 }
+
+@keyframes rewardFadeIn {
+  from { 
+    opacity: 0; 
+  }
+  to { 
+    opacity: 1; 
+  }
+}
+
+@keyframes rewardPopUp {
+  from { 
+    transform: translateY(20px) scale(0.95); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0) scale(1); 
+    opacity: 1; 
+  }
+}
+

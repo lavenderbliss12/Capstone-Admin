@@ -15,6 +15,7 @@ import userIcon from "../images/user-2.png";
 import "./Admin.css";
 
 function Admin_Dashboard({ setActive }) {
+  // ======== CHART DATA ========
   const barData = [
     { day: "M", waste: 40 },
     { day: "T", waste: 50 },
@@ -30,21 +31,32 @@ function Admin_Dashboard({ setActive }) {
     { name: "Available", value: 30 },
   ];
 
+  const COLORS = ["#0C3C01", "#A2AC82"];
+
+  // ======== STUDENT COLLECTIONS ========
   const studentCollections = [
-    { id: "202510177", name: "John Doe", points: 0.1 },
-    { id: "202510155", name: "Jane Smith", points: 30 },
-    { id: "202510100", name: "Jean Do", points: 0.35 },
-    { id: "202510199", name: "Mikaela Cruz", points: 20 },
+    { id: "202510019", surname: "Lazlo", name: "Heinrey Alles", email: "lazlo@example.com", course: "BSBM", dateCreated: "2025/01/01", points: "100 pts" },
+    { id: "202509030", surname: "Riverdale", name: "Chandler Zachary", email: "riverdale@example.com", course: "BSOA", dateCreated: "2025/01/01", points: "15 pts" },
+    { id: "202510010", surname: "Weinston", name: "Rylo Alexandrius", email: "weinston@example.com", course: "BSJOURN", dateCreated: "2025/01/01", points: "0.50 pts" },
+    { id: "202509001", surname: "Jeon", name: "Jeong Woo", email: "jeon@example.com", course: "BSPSYCH", dateCreated: "2025/09/01", points: "99 pts" },
+    { id: "202512008", surname: "Devonshire", name: "Luke Iverson", email: "luke.dev@example.com", course: "BSIT", dateCreated: "2025/02/28", points: "8 pts" },
+    { id: "202512009", surname: "Devonshire", name: "Liam Oleander", email: "liam.dev@example.com", course: "BSIT", dateCreated: "2025/02/28", points: "8 pts" },
+    { id: "201708019", surname: "Montenegro", name: "Jericho Jay", email: "meyer@example.com", course: "BSBA", dateCreated: "2017/01/09", points: "0 pts" },
+    { id: "202510101", surname: "Lennox", name: "McKenzie Ralph", email: "lennox@example.com", course: "BSOA", dateCreated: "2025/01/01", points: "7 pts" },
+    { id: "202009001", surname: "Runehart", name: "Aaron Lysander Kyle", email: "aaron.r@example.com", course: "BSHM", dateCreated: "2020/01/01", points: "20.15 pts" },
+    { id: "202109001", surname: "Runehart", name: "Aiden Laurenzo Kurt", email: "aiden.r@example.com", course: "BSHM", dateCreated: "2021/01/01", points: "20.20 pts" },
   ];
 
-  const recentActivities = [
+  // ======== ALL ACTIVITIES (FULL LIST) ========
+  const allActivities = [
     "The waste bin’s capacity has reached its maximum limit. Please initiate a pickup immediately.",
     "Runehart, Aiden Laurenzo Kurt successfully claimed their rewards.",
-    "Maria Santos claimed her eco points rewards.",
-    "John Doe contributed biodegradable waste to Bin #3.",
+    "Runehart, Aaron Lysander Kyle successfully claimed their rewards.",
+    // Future new activities will appear at the top when added
   ];
 
-  const COLORS = ["#0C3C01", "#A2AC82"];
+  // ======== GET 3 MOST RECENT ========
+  const recentActivities = allActivities.slice(0, 3);
 
   return (
     <div className="dashboard-container-inner">
@@ -53,7 +65,7 @@ function Admin_Dashboard({ setActive }) {
       {/* === TOP ROW === */}
       <div className="top-row">
 
-        {/* ========================= REGISTERED STUDENTS ========================= */}
+        {/* Registered Users */}
         <div className="card">
           <h3 className="card-title">Registered Users</h3>
           <div className="user-body">
@@ -62,9 +74,7 @@ function Admin_Dashboard({ setActive }) {
           </div>
         </div>
 
-
-
-      {/* ========================= BAR GRAPH STUDENT CONTRIBUTES  ========================= */}
+        {/* Student Contributes Chart */}
         <div className="card">
           <h3 className="card-title">Student Contributes</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -77,9 +87,7 @@ function Admin_Dashboard({ setActive }) {
           </ResponsiveContainer>
         </div>
 
-
-
-        {/* ========================= WASTE STATUS ULTRASONIC SENSOR  ========================= */}
+        {/* Waste Status */}
         <div className="card">
           <h3 className="card-title">Waste Status</h3>
           <div className="pie-body">
@@ -105,12 +113,10 @@ function Admin_Dashboard({ setActive }) {
         </div>
       </div>
 
-
-
-
       {/* === SECOND ROW === */}
       <div className="second-row">
-        {/* ========================= STUDENT COLLECTIONS ========================= */}
+
+        {/* Student Collections */}
         <div className="card">
           <div className="card-title-row">
             <h3 className="card-title">Student Collections</h3>
@@ -123,7 +129,8 @@ function Admin_Dashboard({ setActive }) {
             <span>Name</span>
             <span>Points</span>
           </div>
-          {/* Show only 3 rows */}
+
+          {/* Show only first 3 students */}
           {studentCollections.slice(0, 3).map((student, index) => (
             <div className="table-row" key={index}>
               <span>{student.id}</span>
@@ -133,22 +140,20 @@ function Admin_Dashboard({ setActive }) {
           ))}
         </div>
 
-
-
-        {/* ========================= RECENT ACTIVITIES ========================= */}
+        {/* Recent Activities */}
         <div className="card card-activities">
           <div className="card-title-row">
             <h3 className="card-title">Recent Activities</h3>
             <button
-            className="see-all-btn"
-            onClick={() => setActive("activities")}
-          >
-            See More
-          </button>
+              className="see-all-btn"
+              onClick={() => setActive("activities")}
+            >
+              See More
+            </button>
           </div>
           <hr className="activity-line" />
-          {/* Limit to 3 notifications */}
-          {recentActivities.slice(0, 3).map((activity, index) => (
+          {/* Show top 3 most recent */}
+          {recentActivities.map((activity, index) => (
             <div className="activity-texts" key={index}>
               <p>{activity}</p>
             </div>
@@ -160,4 +165,3 @@ function Admin_Dashboard({ setActive }) {
 }
 
 export default Admin_Dashboard;
-
