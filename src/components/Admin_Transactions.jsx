@@ -1,10 +1,9 @@
-// src/components/Admin_Activities.jsx
 import React from "react";
 import "./Admin.css";
 
-function Admin_Activities({ activities = [], setActive }) {
+function Admin_Transactions({ transactions = [], setActive }) {
   // sort newest first so the first lines are the most recent
-  const sorted = [...activities].sort((a, b) => {
+  const sorted = [...transactions].sort((a, b) => {
     if (a.createdAt && b.createdAt) {
       return new Date(b.createdAt) - new Date(a.createdAt);
     }
@@ -14,7 +13,7 @@ function Admin_Activities({ activities = [], setActive }) {
   return (
     <div className="dashboard-container-inner">
       <div className="activity-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2 className="section-title">All Recent Activities</h2>
+        <h2 className="section-title">Transactions</h2>
         
         {/* <div>
           <button className="see-all-btn" onClick={() => setActive("dashboard")}>
@@ -33,11 +32,11 @@ function Admin_Activities({ activities = [], setActive }) {
             </div>
           ))
         ) : (
-          <p>No activities to show.</p>
+          <p>No transactions to show.</p>
         )}
       </div>
     </div>
   );
 }
 
-export default Admin_Activities;
+export default Admin_Transactions;
