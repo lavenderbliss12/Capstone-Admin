@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import "./Admin.css";
 
+<<<<<<< HEAD
 function Admin_Rewards() {
+=======
+function Admin_RewardCatalog() {
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
   const [rewards, setRewards] = useState([
     {
       id: 1,
@@ -65,12 +69,17 @@ function Admin_Rewards() {
   return (
     <div className="reward-catalog-container">
       {/* Header */}
+<<<<<<< HEAD
       <div className="reward-header" 
       style={{ 
         display: "flex", 
         justifyContent: "space-between", 
         alignItems: "center" }}>
         <h2 className="section-title">Reward Catalog</h2>
+=======
+      <div className="reward-header">
+        <h2>Reward Catalog</h2>
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
         <div className="reward-controls">
           <button className="add-btn" onClick={() => setAddingReward(true)}>
             + Add New Reward
@@ -85,7 +94,10 @@ function Admin_Rewards() {
         </div>
       </div>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
       {/* Table */}
       <div className="reward-table-wrapper">
         <table className="reward-table">
@@ -158,10 +170,17 @@ function Admin_Rewards() {
 
       {/* View Modal */}
       {viewingReward && (
+<<<<<<< HEAD
         <div className="reward-modal-overlay">
           <div className="reward-modal-card">
             <h3>Reward Details</h3>
             <div className="reward-modal-body">
+=======
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h3>Reward Details</h3>
+            <div className="modal-body">
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
               <p><strong>Name:</strong> {viewingReward.name}</p>
               <p><strong>Points Required:</strong> {viewingReward.points}</p>
               <p><strong>Stock:</strong> {viewingReward.stock}</p>
@@ -170,11 +189,16 @@ function Admin_Rewards() {
                 {viewingReward.available ? "Available" : "Unavailable"}
               </p>
             </div>
+<<<<<<< HEAD
             <div className="reward-modal-actions">
               <button
                 onClick={() => setViewingReward(null)}
                 className="reward-btn reward-btn-secondary"
               >
+=======
+            <div className="modal-actions">
+              <button onClick={() => setViewingReward(null)} className="btn btn-secondary">
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
                 Close
               </button>
             </div>
@@ -184,8 +208,13 @@ function Admin_Rewards() {
 
       {/* Edit Modal */}
       {editingReward && (
+<<<<<<< HEAD
         <div className="reward-modal-overlay">
           <div className="reward-modal-card">
+=======
+        <div className="modal-overlay">
+          <div className="modal-card">
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
             <h3>Edit Reward</h3>
             <RewardForm
               reward={editingReward}
@@ -198,8 +227,13 @@ function Admin_Rewards() {
 
       {/* Add Reward Modal */}
       {addingReward && (
+<<<<<<< HEAD
         <div className="reward-modal-overlay">
           <div className="reward-modal-card">
+=======
+        <div className="modal-overlay">
+          <div className="modal-card">
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
             <h3>Add New Reward</h3>
             <RewardForm
               onSave={handleAddReward}
@@ -211,6 +245,7 @@ function Admin_Rewards() {
 
       {/* Delete Confirm Modal */}
       {confirmDeleteReward && (
+<<<<<<< HEAD
         <div className="reward-modal-overlay">
           <div className="reward-modal-card">
             <h3>Confirm Delete</h3>
@@ -225,11 +260,26 @@ function Admin_Rewards() {
                 onClick={handleDelete}
                 className="reward-btn reward-btn-danger"
               >
+=======
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <h3>Confirm Delete</h3>
+            <p>
+              Are you sure you want to delete{" "}
+              <strong>{confirmDeleteReward.name}</strong>?
+            </p>
+            <div className="modal-actions">
+              <button onClick={handleDelete} className="btn btn-danger">
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
                 Delete
               </button>
               <button
                 onClick={() => setConfirmDeleteReward(null)}
+<<<<<<< HEAD
                 className="reward-btn reward-btn-secondary"
+=======
+                className="btn btn-secondary"
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
               >
                 Cancel
               </button>
@@ -241,6 +291,10 @@ function Admin_Rewards() {
   );
 }
 
+<<<<<<< HEAD
+=======
+// ✅ --- Reward Form (clean, single version) ---
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
 function RewardForm({ reward = {}, onSave, onCancel }) {
   const [form, setForm] = useState({
     name: reward.name || "",
@@ -259,6 +313,10 @@ function RewardForm({ reward = {}, onSave, onCancel }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(form);
+<<<<<<< HEAD
+=======
+    // Reset fields after saving
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
     setForm({
       name: "",
       points: "",
@@ -269,7 +327,11 @@ function RewardForm({ reward = {}, onSave, onCancel }) {
   };
 
   return (
+<<<<<<< HEAD
     <form className="reward-form-grid" onSubmit={handleSubmit}>
+=======
+    <form className="form-grid" onSubmit={handleSubmit}>
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
       <label>
         Reward Name
         <input
@@ -317,7 +379,14 @@ function RewardForm({ reward = {}, onSave, onCancel }) {
           name="available"
           value={form.available}
           onChange={(e) =>
+<<<<<<< HEAD
             setForm((f) => ({ ...f, available: e.target.value === "true" }))
+=======
+            setForm((f) => ({
+              ...f,
+              available: e.target.value === "true",
+            }))
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
           }
         >
           <option value="true">Available</option>
@@ -325,9 +394,15 @@ function RewardForm({ reward = {}, onSave, onCancel }) {
         </select>
       </label>
 
+<<<<<<< HEAD
       <div className="reward-modal-actions">
         <button type="submit" className="reward-btn reward-btn-primary">Save</button>
         <button type="button" onClick={onCancel} className="reward-btn reward-btn-secondary">
+=======
+      <div className="modal-actions">
+        <button type="submit" className="btn">Save</button>
+        <button type="button" onClick={onCancel} className="btn btn-secondary">
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
           Cancel
         </button>
       </div>
@@ -335,4 +410,8 @@ function RewardForm({ reward = {}, onSave, onCancel }) {
   );
 }
 
+<<<<<<< HEAD
 export default Admin_Rewards;
+=======
+export default Admin_RewardCatalog;
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09

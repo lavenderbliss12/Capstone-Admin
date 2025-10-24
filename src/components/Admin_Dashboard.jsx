@@ -32,6 +32,7 @@ function Admin_Dashboard({ setActive }) {
   ];
 
   const COLORS = ["#0C3C01", "#A2AC82"];
+<<<<<<< HEAD
 
   // ======== STUDENT COLLECTIONS ========
   const studentCollections = [
@@ -57,6 +58,16 @@ function Admin_Dashboard({ setActive }) {
 
   // ======== GET 3 MOST RECENT ========
   const recentActivities = allActivities.slice(0, 3);
+=======
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
+
+  // 🏆 Top Users (sample data)
+  const topUsers = [
+    { id: "202510100", name: "Jean Do", points: 350 },
+    { id: "202510155", name: "Jane Smith", points: 290 },
+    { id: "202510177", name: "John Doe", points: 220 },
+    { id: "202510200", name: "Mary Cruz", points: 180 },
+  ];
 
   return (
     <div className="dashboard-container-inner">
@@ -64,8 +75,11 @@ function Admin_Dashboard({ setActive }) {
 
       {/* === TOP ROW === */}
       <div className="top-row">
+<<<<<<< HEAD
 
         {/* Registered Users */}
+=======
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
         <div className="card">
           <h3 className="card-title">Registered Users</h3>
           <div className="user-body">
@@ -74,7 +88,10 @@ function Admin_Dashboard({ setActive }) {
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* Student Contributes Chart */}
+=======
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
         <div className="card">
           <h3 className="card-title">Student Contributes</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -87,7 +104,10 @@ function Admin_Dashboard({ setActive }) {
           </ResponsiveContainer>
         </div>
 
+<<<<<<< HEAD
         {/* Waste Status */}
+=======
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
         <div className="card">
           <h3 className="card-title">Waste Status</h3>
           <div className="pie-body">
@@ -115,8 +135,12 @@ function Admin_Dashboard({ setActive }) {
 
       {/* === SECOND ROW === */}
       <div className="second-row">
+<<<<<<< HEAD
 
         {/* Student Collections */}
+=======
+        {/* STUDENT COLLECTIONS */}
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
         <div className="card">
           <div className="card-title-row">
             <h3 className="card-title">Student Collections</h3>
@@ -129,6 +153,7 @@ function Admin_Dashboard({ setActive }) {
             <span>Name</span>
             <span>Points</span>
           </div>
+<<<<<<< HEAD
 
           {/* Show only first 3 students */}
           {studentCollections.slice(0, 3).map((student, index) => (
@@ -141,6 +166,26 @@ function Admin_Dashboard({ setActive }) {
         </div>
 
         {/* Recent Activities */}
+=======
+          <div className="table-row">
+            <span>202510177</span>
+            <span>John Doe</span>
+            <span>0.1</span>
+          </div>
+          <div className="table-row">
+            <span>202510155</span>
+            <span>Jane Smith</span>
+            <span>30</span>
+          </div>
+          <div className="table-row">
+            <span>202510100</span>
+            <span>Jean Do</span>
+            <span>0.35</span>
+          </div>
+        </div>
+
+        {/* RECENT ACTIVITIES */}
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
         <div className="card card-activities">
           <div className="card-title-row">
             <h3 className="card-title">Recent Activities</h3>
@@ -152,10 +197,49 @@ function Admin_Dashboard({ setActive }) {
             </button>
           </div>
           <hr className="activity-line" />
+<<<<<<< HEAD
           {/* Show top 3 most recent */}
           {recentActivities.map((activity, index) => (
             <div className="activity-texts" key={index}>
               <p>{activity}</p>
+=======
+          <div className="activity-texts">
+            <p>The bin is full! Please collect the bin.</p>
+          </div>
+          <div className="activity-texts">
+            <p>username010 claimed their rewards.</p>
+          </div>
+          <div className="activity-texts">
+            <p>username011 claimed their rewards.</p>
+          </div>
+          <div className="activity-texts">
+            <p>username002 claimed their rewards.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* === THIRD ROW: TOP USERS === */}
+      <div className="top-users-row">
+        <div className="card">
+          <div className="card-title-row">
+            <h3 className="card-title">🏆 Top Users</h3>
+            <button className="see-all-btn" onClick={() => setActive("users")}>
+              View All
+            </button>
+          </div>
+
+          <div className="table-header-row">
+            <span>Rank</span>
+            <span>Name</span>
+            <span>Points</span>
+          </div>
+
+          {topUsers.map((user, index) => (
+            <div className="table-row" key={user.id}>
+              <span>{index + 1}</span>
+              <span>{user.name}</span>
+              <span>{user.points}</span>
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
             </div>
           ))}
         </div>

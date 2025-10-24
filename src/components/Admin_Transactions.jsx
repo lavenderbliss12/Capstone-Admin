@@ -1,4 +1,5 @@
 import React from "react";
+<<<<<<< HEAD
 import "./Admin.css";
 
 function Admin_Transactions({ transactions = [], setActive }) {
@@ -40,3 +41,11 @@ function Admin_Transactions({ transactions = [], setActive }) {
 }
 
 export default Admin_Transactions;
+=======
+
+const AdminTransactions = () => {
+  return <div>Transactions management</div>;
+};
+
+export default AdminTransactions;
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09

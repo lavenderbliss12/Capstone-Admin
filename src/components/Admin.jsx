@@ -17,11 +17,21 @@ import transaction1 from "../images/transaction-1.png";
 import transaction2 from "../images/transaction-2.png";
 
 // ========================= COMPONENT IMPORTS =========================
+<<<<<<< HEAD
 import Admin_Dashboard from "./Admin_Dashboard";
 import Admin_UserManagement from "./Admin_UserManagement";
 import Admin_Activities from "./Admin_Activities";
 import Admin_Rewards from "./Admin_Rewards";
 import Admin_Transactions from "./Admin_Transactions";
+=======
+import AdminDashboard from "./Admin_Dashboard";
+import AdminUserManagement from "./Admin_UserManagement";
+import AdminActivities from "./Admin_Activities";
+import AdminRewards from "./Admin_Rewards";
+import AdminRedeem from "./Admin_Redeem";
+import AdminTransactions from "./Admin_Transactions";
+
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
 
 // ========================= SIDEBAR ITEMS =========================
 const navItems = [
@@ -29,7 +39,12 @@ const navItems = [
   { id: "users", label: "USERS", icons: [user1, user2] },
   { id: "activities", label: "ACTIVITIES", icons: [activity1, activity2] },
   { id: "rewards", label: "REWARDS", icons: [reward1, reward2] },
+<<<<<<< HEAD
   { id: "transactions", label: "TRANSACTIONS", icons: [transaction1, transaction2] },
+=======
+  { id: "redeem", label: "REDEEM", icons: [reward1, reward2] }, 
+  { id: "transactions", label: "TRANSACTIONS", icons: [activity1, activity2] }, 
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
 ];
 
 // ========================= MAIN ADMIN COMPONENT =========================
@@ -83,6 +98,7 @@ const Admin = () => {
   const renderContent = () => {
     switch (active) {
       case "dashboard":
+<<<<<<< HEAD
         return (
           <Admin_Dashboard
             setActive={goToSection}
@@ -90,18 +106,30 @@ const Admin = () => {
             setActivities={setActivities}
           />
         );
+=======
+        return <AdminDashboard setActive={goToSection} />; // Pass setActive so child can navigate
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
       case "users":
-        return <Admin_UserManagement setActive={goToSection} />;
+        return <AdminUserManagement setActive={goToSection} />;
       case "activities":
+<<<<<<< HEAD
         return (
           <Admin_Activities
             setActive={goToSection}
             activities={sortedActivities}
           />
         );
+=======
+        return <AdminActivities setActive={goToSection} />;
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
       case "rewards":
-        return <Admin_Rewards setActive={goToSection} />;
+        return <AdminRewards setActive={goToSection} />;
+      case "redeem":
+        return <AdminRedeem />; 
+      case "transactions":
+        return <AdminTransactions />; 
       default:
+<<<<<<< HEAD
         return (
           <Admin_Dashboard
             setActive={goToSection}
@@ -116,6 +144,9 @@ const Admin = () => {
             activities={sortedActivities}
           />
         );
+=======
+        return <AdminDashboard setActive={goToSection} />;
+>>>>>>> 13f2aad2fcc985767cd992212803252bd5ff1f09
     }
   };
 

@@ -22,18 +22,20 @@ function Admin_UserManagement() {
 
   const [students, setStudents] = useState([
     { 
-      id: "202510019", 
-      surname: "Lazlo", 
-      name: "Heinrey Alles", 
-      email: "lazlo@example.com", 
-      course: "BSBM", 
-      dateCreated: "2025/01/01", 
-      points: "100 pts"
-     },
+    id: "202510019",
+    uid: "A1B2C3D4",
+    surname: "Lazlo",
+    name: "Heinrey Alles",
+    email: "lazlo@example.com",
+    course: "BSBM",
+    dateCreated: "2025/01/01",
+    points: "100 pts"
+  },
 
     { 
       id: "202509030", 
       surname: "Riverdale", 
+      uid: "E5F6G7H8",
       name: "Chandler Zachary", 
       email: "riverdale@example.com", 
       course: "BSOA", 
@@ -279,13 +281,14 @@ function Admin_UserManagement() {
           <thead>
             <tr>
               <th style={{width: '12%'}}>Student ID</th>
-              <th style={{width: '44%'}}>Student Name</th>
+              <th style={{width: '40%'}}>Student Name</th>
               <th style={{width: '14%'}}>Course</th>
               <th style={{width: '12%'}}>Date Created</th>
               <th style={{width: '10%'}}>Points</th>
               <th style={{width: '8%'}}></th>
             </tr>
-          </thead>
+        </thead>
+
           <tbody>
             {filteredStudents.map((student, index) => (
               <tr key={student.id}>
@@ -334,8 +337,8 @@ function Admin_UserManagement() {
                   <div className="modal-val">{viewingStudent.id}</div>
                 </div>
                 <div>
-                  <strong>SURNAME:</strong>
-                  <div className="modal-val">{viewingStudent.surname}</div>
+                  <strong>UID:</strong>
+                  <div className="modal-val">{viewingStudent.uid}</div>
                 </div>
                 <div>
                   <strong>NAME:</strong>
@@ -372,7 +375,6 @@ function Admin_UserManagement() {
                 <>
                   {/* When editing the modal only shows Save / Cancel (as requested) */}
                   {/* Save handled inside EditStudentForm */}
-                  <button onClick={() => setIsEditing(false)} className="btn btn-secondary">Cancel</button>
                 </>
               )}
             </div>
@@ -425,6 +427,7 @@ function EditStudentForm({ student, onSave, onCancel }) {
   return (
     <form className="form-grid" onSubmit={handleSubmit}>
       <label>ID<input name="id" value={form.id} onChange={handleChange} readOnly /></label>
+      <label>IUD<input name="uid" value={form.uid} onChange={handleChange} /></label>
       <label>Surname<input name="surname" value={form.surname || ""} onChange={handleChange} /></label>
       <label>Name<input name="name" value={form.name || ""} onChange={handleChange} /></label>
       <label>Email Address<input name="email" value={form.email || ""} onChange={handleChange} /></label>
