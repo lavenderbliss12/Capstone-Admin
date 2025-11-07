@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// generator client {
+//  provider = "prisma-client"
+//  output   = "../generated/prisma"
+// }
+
+// datasource db {
+//  provider = "postgresql"
+//  url      = env("DATABASE_URL")
+// }
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:@localhost:3306/capstone"
+}
+
+model user {
+
+  id               Int         @id @default(autoincrement()) @unique
+  surname         String      @db.VarChar(50)
+  name            String      @db.VarChar(50)
+  email           String      @db.VarChar(100) @unique
+  date_created    DateTime    @default(now())  @db.DateTime(0)
+  password        String      @db.VarChar(50)
+  points          Int         
+
+}
+
+model transaction {
+
+  reference_id    Int         @id @default(autoincrement()) @unique
+  user_id         Int      
+  name            String      @db.VarChar(50)
+  reward          String      @db.VarChar(50) 
+  points_used     Int  
+  date_created    DateTime    @default(now())  @db.DateTime(0)
+  status          String      @db.VarChar(50)       
+
+}

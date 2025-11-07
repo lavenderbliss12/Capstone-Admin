@@ -13,6 +13,9 @@ import dropDark from "../images/dropdown-2.png";
 import ellipsisIcon from "../images/ellipsis-1.png";
 
 function Admin_UserManagement() {
+  // API base: override with REACT_APP_PHP_API env var when running CRA dev server
+  const API_BASE = process.env.REACT_APP_PHP_API || 'http://localhost/A-INCENTIVES-CAPSTONE/src/components/php-backend/index.php';
+
   const [filter, setFilter] = useState("Course");
   const [sortOrder, setSortOrder] = useState("asc"); // asc = A-Z ; desc = Z-A
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -20,116 +23,74 @@ function Admin_UserManagement() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const [students, setStudents] = useState([
-    { 
-    id: "202510019",
-    uid: "A1B2C3D4",
-    surname: "Lazlo",
-    name: "Heinrey Alles",
-    email: "lazlo@example.com",
-    course: "BSBM",
-    dateCreated: "2025/01/01",
-    points: "100 pts"
-  },
+  // start empty - load from PHP backend
+  const [students, setStudents] = useState([]);
 
-    { 
-      id: "202509030", 
-      surname: "Riverdale", 
-      uid: "E5F6G7H8",
-      name: "Chandler Zachary", 
-      email: "riverdale@example.com", 
-      course: "BSOA", 
-      dateCreated: "2025/01/01",
-       points: "15 pts" 
-    },
-    
-    {
-     id: "202510010",
-     surname: "Weinston", 
-     name: "Rylo Alexandrius",
-      email: "weinston@example.com", 
-      course: "BSJOURN", 
-      dateCreated: "2025/01/01", 
-      points: "0.50 pts" 
-    },
+  // load/save cache key so data remains visible after browser refresh
+  const CACHE_KEY = 'cap_users_v1';
 
-    { 
-      id: "202509001", 
-      surname: "Jeon", 
-      name: "Jeong Woo", 
-      email: "jeon@example.com", 
-      course: "BSPSYCH", 
-      dateCreated: "2025/09/01", 
-      points: "99 pts"
-    },
+  // Helper: format points for display
+  const fmtPoints = (p) => (p === null || p === undefined ? '0 pts' : (typeof p === 'number' ? `${p} pts` : `${p}`));
 
-    { 
-      id: "202512008",
-      surname: "Devonshire", 
-      name: "Luke Iverson", 
-      email: "luke.dev@example.com", 
-      course: "BSIT", 
-      dateCreated: "2025/02/28", 
-      points: "8 pts" 
-    },
+  // Helper: parse numeric points from form value like "10 pts" or numeric string
+  const parsePoints = (p) => {
+    if (p === null || p === undefined) return 0;
+    if (typeof p === 'number') return p;
+    const n = parseFloat(String(p).replace(/[^0-9.\-]/g, ''));
+    return Number.isFinite(n) ? n : 0;
+  };
 
-    { 
-      id: "202512009", 
-      surname: "Devonshire", 
-      name: "Liam Oleander", 
-      email: "liam.dev@example.com", 
-      course: "BSIT", 
-      dateCreated: "2025/02/28", 
-      points: "8 pts" 
-    },
+  // Load users from cache first so UI persists between refreshes, then fetch authoritative list
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (raw) {
+        const cached = JSON.parse(raw);
+        if (Array.isArray(cached) && cached.length) setStudents(cached);
+      }
+    } catch (e) {
+      // ignore malformed cache
+    }
+    fetchUsers();
+  }, []);
 
-    { 
-      id: "201708019", 
-      surname: "Montenegro",
-      name: "Jericho Jay", 
-      email: "meyer@example.com", 
-      course: "BSBA", 
-      dateCreated: "2017/01/09", 
-      points: "0 pts" 
-    },
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/users`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      // map backend fields to UI model
+      const mapped = data.map(u => ({
+        id: String(u.id),
+        surname: u.surname,
+        name: u.name,
+        email: u.email,
+        course: u.course ?? '',
+        dateCreated: u.date_created?.split(' ')[0]?.replace(/-/g,'/') ?? (u.date ?? ''),
+        points: fmtPoints(u.points)
+      }));
+      setStudents(mapped);
+      // persist fetched users to cache so table stays on refresh
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(mapped)); } catch (e) { /* ignore */ }
+    } catch (err) {
+      console.error('Failed to fetch users', err);
+    }
+  };
 
-    { 
-      id: "202510101", 
-      surname: "Lennox", 
-      name: "McKenzie Ralph", 
-      email: "lennox@example.com", 
-      course: "BSOA", 
-      dateCreated: "2025/01/01", 
-      points: "7 pts" 
-    },
-
-    { 
-      id: "202009001",
-       surname: "Runehart", 
-       name: "Aaron Lysander Kyle",
-        email: "aaron.r@example.com",
-         course: "BSHM", 
-         dateCreated: "2020/01/01", 
-         points: "20.15 pts" 
-        },
-
-    { 
-      id: "202109001", 
-      surname: "Runehart", 
-      name: "Aiden Laurenzo Kurt", 
-      email: "aiden.r@example.com", 
-      course: "BSHM", 
-      dateCreated: "2021/01/01", 
-      points: "20.20 pts" 
-    },
-
-  ]);
+  const saveCache = (arr) => {
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(arr)); } catch (e) { /* ignore */ }
+  };
 
   // Modal state
   const [viewingStudent, setViewingStudent] = useState(null);
   const [confirmRemoveStudent, setConfirmRemoveStudent] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [registering, setRegistering] = useState(false);
+  // Alert modal state (for validation/errors)
+  const [alertModal, setAlertModal] = useState(null);
+
+  const showAlert = (msg) => setAlertModal(String(msg || ''));
+  const closeAlert = () => setAlertModal(null);
 
   // FILTER
   const filteredByCourse = filter === "All" || filter === "Course"
@@ -179,34 +140,94 @@ function Admin_UserManagement() {
   };
   const confirmRemove = () => {
     if (!confirmRemoveStudent) return;
-    setStudents(prev => prev.filter(s => s.id !== confirmRemoveStudent.id));
-    setConfirmRemoveStudent(null);
+    // call PHP delete
+    const id = confirmRemoveStudent.id;
+    fetch(`${API_BASE}/users/${id}`, { method: 'DELETE' })
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        setStudents(prev => {
+          const next = prev.filter(s => s.id !== id);
+          saveCache(next);
+          return next;
+        });
+        setConfirmRemoveStudent(null);
+      })
+      .catch(err => {
+        console.error('Delete failed', err);
+        showAlert('Failed to delete user. See console for details.');
+      });
   };
   const cancelRemove = () => setConfirmRemoveStudent(null);
 
   const closeView = () => { setViewingStudent(null); setIsEditing(false); };
   const startEdit = () => setIsEditing(true);
   const saveEdit = (edited) => {
-    setStudents(prev => prev.map(s => (s.id === edited.id ? edited : s)));
-    setViewingStudent(edited);
-    setIsEditing(false);
+    // send update to PHP backend
+    const id = edited.id;
+    const body = {
+      surname: edited.surname,
+      name: edited.name,
+      email: edited.email,
+      points: parsePoints(edited.points),
+      course: edited.course
+    };
+    fetch(`${API_BASE}/users/${id}`, { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) })
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        // reflect in UI and cache
+        setStudents(prev => {
+          const next = prev.map(s => (s.id === edited.id ? { ...edited, points: fmtPoints(parsePoints(edited.points)) } : s));
+          saveCache(next);
+          return next;
+        });
+        setViewingStudent({ ...edited, points: fmtPoints(parsePoints(edited.points)) });
+        setIsEditing(false);
+      })
+      .catch(err => {
+        console.error('Update failed', err);
+        showAlert('Failed to update user. See console for details.');
+      });
   };
 
   const openRegister = () => { setRegistering(true); setOpenMenuIndex(null); };
   const cancelRegister = () => setRegistering(false);
   const saveRegister = (newStudent) => {
-    setStudents(prev => [newStudent, ...prev]);
-    setRegistering(false);
+    // create on PHP backend
+    const body = {
+      surname: newStudent.surname,
+      name: newStudent.name,
+      email: newStudent.email,
+      password: newStudent.password ?? 'temp',
+      points: parsePoints(newStudent.points),
+      course: newStudent.course
+    };
+    fetch(`${API_BASE}/users`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) })
+      .then(r => r.json())
+      .then(res => {
+        if (!res || !res.id) throw new Error('Invalid response');
+        const created = { ...newStudent, id: String(res.id), points: fmtPoints(parsePoints(newStudent.points)) };
+        setStudents(prev => {
+          const next = [created, ...prev];
+          saveCache(next);
+          return next;
+        });
+        setRegistering(false);
+      })
+      .catch(err => {
+        console.error('Create user failed', err);
+        showAlert('Failed to create user. See console for details.');
+      });
   };
 
-  const courseOptions = ["All", "BSIT", "BSOA", "BSBM", "BSHM", "BSJOURN", "BSPSYCH"];
+  const courseOptions = ["All", "BSIT", "BSCS", "BSOA", "BSBM", "BSBA", "BSJOURN", "BSPSYCH"];
 
   return (
     <div className="user-management-container">
+      <h2 className="welcome-text">User Management</h2>
       {/* Title */}
-      <div className="user-management-header">
-        <h2 className="user-title">Student Management</h2>
-      </div>
+      {/* <div className="user-management-header">
+        <h3 className="card-title">Student Management</h3>
+      </div> */}
 
       {/* Filters */}
       <div className="user-management-filters">
@@ -326,7 +347,7 @@ function Admin_UserManagement() {
 
       {/* View / Edit Modal */}
       {viewingStudent && (
-        <div className="modal-overlay">
+        <div className="modal-overlay" style={{ zIndex: 1000 }}>
           <div className="modal-card">
             <h3>Student Details</h3>
 
@@ -335,10 +356,6 @@ function Admin_UserManagement() {
                 <div>
                   <strong>ID:</strong>
                   <div className="modal-val">{viewingStudent.id}</div>
-                </div>
-                <div>
-                  <strong>UID:</strong>
-                  <div className="modal-val">{viewingStudent.uid}</div>
                 </div>
                 <div>
                   <strong>NAME:</strong>
@@ -350,7 +367,35 @@ function Admin_UserManagement() {
                 </div>
                 <div>
                   <strong>COURSE:</strong>
-                  <div className="modal-val">{viewingStudent.course}</div>
+                  <div className="modal-val">
+                    <select
+                      value={viewingStudent.course || ""}
+                      onChange={(e) => {
+                        const nextCourse = e.target.value;
+                        const updated = { ...viewingStudent, course: nextCourse };
+                        setViewingStudent(updated);
+                        // also update students list immediately
+                        setStudents(prev => {
+                          const next = prev.map(s => s.id === updated.id ? { ...s, course: nextCourse } : s);
+                          saveCache(next);
+                          return next;
+                        });
+                        // persist change to backend
+                        fetch(`${API_BASE}/users/${updated.id}`, { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ course: nextCourse }) })
+                          .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); })
+                          .catch(err => { console.error('Failed to update course', err); showAlert('Failed to update course.'); });
+                      }}
+                    >
+                      <option value="">Select course</option>
+                      <option value="BSIT">BSIT</option>
+                      <option value="BSCS">BSCS</option>
+                      <option value="BSOA">BSOA</option>
+                      <option value="BSBM">BSBM</option>
+                      <option value="BSBA">BSBA</option>
+                      <option value="BSJOURN">BSJOURN</option>
+                      <option value="BSPSYCH">BSPSYCH</option>
+                    </select>
+                  </div>
                 </div>
                 <div>
                   <strong>Date Created:</strong>
@@ -362,7 +407,7 @@ function Admin_UserManagement() {
                 </div>
               </div>
             ) : (
-              <EditStudentForm student={viewingStudent} onSave={saveEdit} onCancel={() => setIsEditing(false)} />
+              <EditStudentForm student={viewingStudent} onSave={saveEdit} onCancel={() => setIsEditing(false)} showAlert={showAlert} />
             )}
 
             <div className="modal-actions">
@@ -377,6 +422,21 @@ function Admin_UserManagement() {
                   {/* Save handled inside EditStudentForm */}
                 </>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Alert Modal (validation/errors) */}
+      {alertModal && (
+        <div className="modal-overlay" style={{ zIndex: 1200 }}>
+          <div className="modal-card">
+            <h3>Attention</h3>
+            <div className="modal-body">
+              <p>{alertModal}</p>
+            </div>
+            <div className="modal-actions">
+              <button onClick={closeAlert} className="btn">OK</button>
             </div>
           </div>
         </div>
@@ -403,7 +463,7 @@ function Admin_UserManagement() {
         <div className="modal-overlay">
           <div className="modal-card">
             <h3>Register Student</h3>
-            <RegisterStudentForm onSave={saveRegister} onCancel={cancelRegister} />
+            <RegisterStudentForm onSave={saveRegister} onCancel={cancelRegister} showAlert={showAlert} />
           </div>
         </div>
       )}
@@ -412,7 +472,7 @@ function Admin_UserManagement() {
 }
 
 // --- Inline form components ---
-function EditStudentForm({ student, onSave, onCancel }) {
+function EditStudentForm({ student, onSave, onCancel, showAlert }) {
   const [form, setForm] = useState({ ...student });
 
   useEffect(() => setForm({ ...student }), [student]);
@@ -421,17 +481,32 @@ function EditStudentForm({ student, onSave, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // validate required fields
+    if (!form.name?.trim() || !form.surname?.trim()) {
+      if (typeof showAlert === 'function') return showAlert('Surname and Name should be filled');
+      return alert('Surname and Name should be filled');
+    }
     onSave(form);
   };
 
   return (
     <form className="form-grid" onSubmit={handleSubmit}>
       <label>ID<input name="id" value={form.id} onChange={handleChange} readOnly /></label>
-      <label>IUD<input name="uid" value={form.uid} onChange={handleChange} /></label>
       <label>Surname<input name="surname" value={form.surname || ""} onChange={handleChange} /></label>
       <label>Name<input name="name" value={form.name || ""} onChange={handleChange} /></label>
       <label>Email Address<input name="email" value={form.email || ""} onChange={handleChange} /></label>
-      <label>Course<input name="course" value={form.course || ""} onChange={handleChange} /></label>
+      <label>Course
+        <select name="course" value={form.course || ""} onChange={handleChange}>
+          <option value="">Select course</option>
+          <option value="BSIT">BSIT</option>
+          <option value="BSCS">BSCS</option>
+          <option value="BSOA">BSOA</option>
+          <option value="BSBM">BSBM</option>
+          <option value="BSBA">BSBA</option>
+          <option value="BSJOURN">BSJOURN</option>
+          <option value="BSPSYCH">BSPSYCH</option>
+        </select>
+      </label>
       <label>Date Created<input name="dateCreated" value={form.dateCreated || ""} onChange={handleChange} /></label>
       <label>Points<input name="points" value={form.points || ""} onChange={handleChange} /></label>
 
@@ -443,7 +518,7 @@ function EditStudentForm({ student, onSave, onCancel }) {
   );
 }
 
-function RegisterStudentForm({ onSave, onCancel }) {
+function RegisterStudentForm({ onSave, onCancel, showAlert }) {
   const [form, setForm] = useState({
     id: Date.now().toString(),
     surname: "",
@@ -458,7 +533,10 @@ function RegisterStudentForm({ onSave, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.surname?.trim()) return alert('Surname and Name are required');
+    if (!form.name.trim() || !form.surname?.trim()) {
+      if (typeof showAlert === 'function') return showAlert('Surname and Name should be filled');
+      return alert('Surname and Name should be filled');
+    }
     onSave(form);
   };
 
@@ -468,7 +546,18 @@ function RegisterStudentForm({ onSave, onCancel }) {
       <label>Surname<input name="surname" value={form.surname} onChange={handleChange} /></label>
       <label>Name<input name="name" value={form.name} onChange={handleChange} /></label>
       <label>Email Address<input name="email" value={form.email} onChange={handleChange} /></label>
-      <label>Course<input name="course" value={form.course} onChange={handleChange} /></label>
+      <label>Course
+        <select name="course" value={form.course} onChange={handleChange}>
+          <option value="">Select course</option>
+          <option value="BSIT">BSIT</option>
+          <option value="BSCS">BSCS</option>
+          <option value="BSOA">BSOA</option>
+          <option value="BSBM">BSBM</option>
+          <option value="BSBA">BSBA</option>
+          <option value="BSJOURN">BSJOURN</option>
+          <option value="BSPSYCH">BSPSYCH</option>
+        </select>
+      </label>
       <label>Date Created<input name="dateCreated" value={form.dateCreated} onChange={handleChange} /></label>
       <label>Points<input name="points" value={form.points} onChange={handleChange} /></label>
 

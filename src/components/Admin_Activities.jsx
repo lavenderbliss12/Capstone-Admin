@@ -1,4 +1,4 @@
-// src/components/Admin_Activities.jsx
+
 import React from "react";
 import "./Admin.css";
 
@@ -13,28 +13,25 @@ function Admin_Activities({ activities = [], setActive }) {
 
   return (
     <div className="dashboard-container-inner">
-      <div className="activity-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2 className="section-title">All Recent Activities</h2>
-        
-        {/* <div>
-          <button className="see-all-btn" onClick={() => setActive("dashboard")}>
-            Back to Dashboard
-          </button>
+      <div className="card card-activities">
+        <div className="card-inner">
+          <div className="card-title-row">
+            <h3 className="card-title">Recent Activities</h3>
+          </div>
+          <hr className="activity-line" />
+
+          <div className="activity-container">
+            {sorted.length > 0 ? (
+              sorted.map((activity) => (
+                <div key={activity.id} className="activity-row">
+                  <p>{activity.message}</p>
+                </div>
+              ))
+            ) : (
+              <p>No activities to show.</p>
+            )}
+          </div>
         </div>
-         */} 
-
-      </div>
-
-      <div className="activity-container">
-        {sorted.length > 0 ? (
-          sorted.map((activity) => (
-            <div key={activity.id} className="activity-row">
-              <p>{activity.message}</p>
-            </div>
-          ))
-        ) : (
-          <p>No activities to show.</p>
-        )}
       </div>
     </div>
   );
