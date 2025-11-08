@@ -1,26 +1,27 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Admin.css";
+import api from "../services/api";
 
 function Admin_Rewards() {
-  const [rewards, setRewards] = useState([
-    {
-      id: 1,
-      thumbnail: "",
-      name: "10 copies of bond paper",
-      points: 100,
-      stock: 20,
-      available: true,
-    },
-    {
-      id: 2,
-      thumbnail: "",
-      name: "1pc Black ballpen",
-      points: 50,
-      stock: 0,
-      available: false,
-    },
-  ]);
+  const [rewards, setRewards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const list = await api.getRewards();
+        if (mounted) setRewards(list);
+      } catch (e) {
+        if (mounted) setError('Failed to load rewards');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   const [viewingReward, setViewingReward] = useState(null);
   const [editingReward, setEditingReward] = useState(null);
@@ -33,34 +34,37 @@ function Admin_Rewards() {
     r.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleToggleAvailability = (id) => {
-    setRewards((prev) =>
-      prev.map((r) =>
-        r.id === id ? { ...r, available: !r.available } : r
-      )
-    );
+  const handleToggleAvailability = async (id) => {
+    const found = rewards.find(r => r.id === id);
+    if (!found) return;
+    const next = { ...found, available: !found.available };
+    setRewards(prev => prev.map(r => r.id === id ? next : r));
+    try { await api.updateReward(id, { available: next.available }); } catch {}
   };
 
-  const handleDelete = () => {
-    setRewards((prev) =>
-      prev.filter((r) => r.id !== confirmDeleteReward.id)
-    );
+  const handleDelete = async () => {
+    const id = confirmDeleteReward?.id;
+    if (!id) return;
+    setRewards(prev => prev.filter(r => r.id !== id));
     setConfirmDeleteReward(null);
+    try { await api.deleteReward(id); } catch {}
   };
 
-  const handleSaveEdit = (edited) => {
-    setRewards((prev) =>
-      prev.map((r) => (r.id === edited.id ? edited : r))
-    );
+  const handleSaveEdit = async (edited) => {
+    setRewards(prev => prev.map(r => (r.id === edited.id ? edited : r)));
     setEditingReward(null);
+    try { await api.updateReward(edited.id, edited); } catch {}
   };
 
-  const handleAddReward = (newReward) => {
-    setRewards((prev) => [
-      { ...newReward, id: Date.now() },
-      ...prev,
-    ]);
-    setAddingReward(false);
+  const handleAddReward = async (newReward) => {
+    try {
+      const created = await api.createReward(newReward);
+      setRewards(prev => [ created, ...prev ]);
+    } catch {
+      setRewards(prev => [ { ...newReward, id: Date.now() }, ...prev ]);
+    } finally {
+      setAddingReward(false);
+    }
   };
 
   return (
@@ -102,7 +106,13 @@ function Admin_Rewards() {
             </tr>
           </thead>
           <tbody>
-            {filteredRewards.length > 0 ? (
+            {loading && (
+              <tr><td colSpan={6}>Loading...</td></tr>
+            )}
+            {error && (
+              <tr><td colSpan={6} style={{color:'red'}}>{error}</td></tr>
+            )}
+            {!loading && !error && filteredRewards.length > 0 ? (
               filteredRewards.map((r) => (
                 <tr key={r.id}>
                   <td>
@@ -147,13 +157,13 @@ function Admin_Rewards() {
                   </td>
                 </tr>
               ))
-            ) : (
+            ) : (!loading && !error ? (
               <tr>
                 <td colSpan={6} style={{ textAlign: "center" }}>
                   No rewards found.
                 </td>
               </tr>
-            )}
+            ) : null)}
           </tbody>
         </table>
       </div>

@@ -10,9 +10,14 @@ export class UserManagementService {
   async create(createUserManagementDto: CreateUserManagementDto) {
 
     try {
-      return await this.databaseService.user.create({
-        data: createUserManagementDto,
-      });
+      // Provide defaults for required mapped fields (uid, username)
+      const data: any = {
+        ...createUserManagementDto,
+        uid: createUserManagementDto.uid || `UID-${Date.now()}`,
+        username: createUserManagementDto.username || createUserManagementDto.email.split('@')[0],
+        points: createUserManagementDto.points ?? 0,
+      };
+      return await this.databaseService.user.create({ data });
     } catch (err) {
       throw new HttpException(
         `Failed to create user: ${err?.message ?? err}`,
@@ -21,8 +26,17 @@ export class UserManagementService {
     }
   }
 
-  findAll() {
-    return `This action returns all userManagement`;
+  async findAll() {
+    try {
+      return await this.databaseService.user.findMany({
+        orderBy: { id: 'desc' },
+      });
+    } catch (err) {
+      throw new HttpException(
+        `Failed to list users: ${err?.message ?? err}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findOne(id: number) {

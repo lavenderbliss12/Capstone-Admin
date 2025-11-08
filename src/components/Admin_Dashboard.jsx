@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -11,140 +11,61 @@ import {
   Cell,
 } from "recharts";
 import userIcon from "../images/user-2.png";
-import axios from "axios";
+import api from "../services/api";
 import "./Admin.css";
 
 function Admin_Dashboard({ setActive }) {
-  const barData = [
-    { day: "M", waste: 40 },
-    { day: "T", waste: 50 },
-    { day: "W", waste: 30 },
-    { day: "T", waste: 70 },
-    { day: "F", waste: 60 },
-    { day: "S", waste: 45 },
-    { day: "S", waste: 100 },
+  const [stats, setStats] = useState({ userCount: 0, totalPoints: 0, disposalKgWeek: [], wasteStatus: { fullPercent: 0 } });
+  const [users, setUsers] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [s, u, t] = await Promise.all([
+          api.getDashboardStats(),
+          api.getUsers(),
+          api.getTransactions()
+        ]);
+        if (!mounted) return;
+        setStats(s);
+        setUsers(u);
+        setTransactions(t);
+      } catch (e) {
+        setError('Failed to load dashboard');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  const barData = stats.disposalKgWeek.length ? stats.disposalKgWeek : [
+    { day: 'M', waste: 0 }, { day: 'T', waste: 0 }, { day: 'W', waste: 0 }, { day: 'T', waste: 0 }, { day: 'F', waste: 0 }, { day: 'S', waste: 0 }, { day: 'S', waste: 0 }
   ];
 
   const pieData = [
-    { name: "Full", value: 70 },
-    { name: "Available", value: 30 },
+    { name: 'Full', value: stats.wasteStatus.fullPercent },
+    { name: 'Available', value: 100 - stats.wasteStatus.fullPercent }
   ];
 
-  const studentCollections = [
-     { 
-      id: "202510019", 
-      surname: "Lazlo", 
-      name: "Heinrey Alles", 
-      email: "lazlo@example.com", 
-      course: "BSBM", 
-      dateCreated: "2025/01/01", 
-      points: "100 pts"
-     },
+  // Derive student collections: top recent or highest points
+  const studentCollections = users
+    .map(u => ({ id: u.uid || u.id, name: `${u.name}`, course: u.course, points: `${u.points} pts` }))
+    .slice(0, 10);
 
-    { 
-      id: "202509030", 
-      surname: "Riverdale", 
-      name: "Chandler Zachary", 
-      email: "riverdale@example.com", 
-      course: "BSOA", 
-      dateCreated: "2025/01/01",
-       points: "15 pts" 
-    },
-    
-    {
-     id: "202510010",
-     surname: "Weinston", 
-     name: "Rylo Alexandrius",
-      email: "weinston@example.com", 
-      course: "BSJOURN", 
-      dateCreated: "2025/01/01", 
-      points: "0.50 pts" 
-    },
-
-    { 
-      id: "202509001", 
-      surname: "Jeon", 
-      name: "Jeong Woo", 
-      email: "jeon@example.com", 
-      course: "BSPSYCH", 
-      dateCreated: "2025/09/01", 
-      points: "99 pts"
-    },
-
-    { 
-      id: "202512008",
-      surname: "Devonshire", 
-      name: "Luke Iverson", 
-      email: "luke.dev@example.com", 
-      course: "BSIT", 
-      dateCreated: "2025/02/28", 
-      points: "8 pts" 
-    },
-
-    { 
-      id: "202512009", 
-      surname: "Devonshire", 
-      name: "Liam Oleander", 
-      email: "liam.dev@example.com", 
-      course: "BSIT", 
-      dateCreated: "2025/02/28", 
-      points: "8 pts" 
-    },
-
-    { 
-      id: "201708019", 
-      surname: "Montenegro",
-      name: "Jericho Jay", 
-      email: "meyer@example.com", 
-      course: "BSBA", 
-      dateCreated: "2017/01/09", 
-      points: "0 pts" 
-    },
-
-    { 
-      id: "202510101", 
-      surname: "Lennox", 
-      name: "McKenzie Ralph", 
-      email: "lennox@example.com", 
-      course: "BSOA", 
-      dateCreated: "2025/01/01", 
-      points: "7 pts" 
-    },
-
-    { 
-      id: "202009001",
-       surname: "Runehart", 
-       name: "Aaron Lysander Kyle",
-        email: "aaron.r@example.com",
-         course: "BSHM", 
-         dateCreated: "2020/01/01", 
-         points: "20.15 pts" 
-        },
-
-    { 
-      id: "202109001", 
-      surname: "Runehart", 
-      name: "Aiden Laurenzo Kurt", 
-      email: "aiden.r@example.com", 
-      course: "BSHM", 
-      dateCreated: "2021/01/01", 
-      points: "20.20 pts" 
-    },
-
-  ];
-
-  const recentActivities = [
-    "The waste bin’s capacity has reached its maximum limit. Please initiate a pickup immediately.",
-    "Runehart, Aiden Laurenzo Kurt successfully claimed their rewards.",
-    "Runehart, Aaron Lysander Kyle successfully claimed their rewards.",
-
-  ];
+  const recentActivities = transactions.slice(0, 10).map(tx => `${tx.rewardName} redeemed by user ${tx.userId}`);
 
   const COLORS = ["#0C3C01", "#A2AC82"];
 
   return (
     <div className="dashboard-container-inner">
-      <h2 className="welcome-text">Welcome, Administrator!</h2>
+  <h2 className="welcome-text">Welcome, Administrator!</h2>
+  {loading && <p style={{marginTop:'4px'}}>Loading dashboard...</p>}
+  {error && <p style={{color:'red'}}>{error}</p>}
 
       {/* === TOP ROW === */}
       <div className="top-row">
@@ -153,7 +74,7 @@ function Admin_Dashboard({ setActive }) {
         <div className="card card-registered">
           <h3 className="card-title">Registered Users</h3>
           <div className="user-body">
-            <span className="user-number">254</span>
+            <span className="user-number">{stats.userCount}</span>
             <img src={userIcon} alt="User Icon" className="user-img" />
           </div>
         </div>
@@ -196,7 +117,7 @@ function Admin_Dashboard({ setActive }) {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <p className="pie-percent">70% Full</p>
+            <p className="pie-percent">{stats.wasteStatus.fullPercent}% Full</p>
           </div>
         </div>
       </div>
@@ -215,7 +136,7 @@ function Admin_Dashboard({ setActive }) {
             </button>
           </div>
           <div className="table-header-row">
-            <span>ID</span>
+            <span>UID</span>
             <span>Name</span>
             <span>Points</span>
           </div>

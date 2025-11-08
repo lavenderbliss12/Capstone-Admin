@@ -19,11 +19,12 @@ import transaction2 from "../images/transaction-2.png";
 
 
 // ========================= COMPONENT IMPORTS =========================
-import Admin_Dashboard from "./Admin_Dashboard";
-import Admin_UserManagement from "./Admin_UserManagement";
-import Admin_Activities from "./Admin_Activities";
-import Admin_Rewards from "./Admin_Rewards";
-import Admin_Transactions from "./Admin_Transactions";
+import AdminDashboard from "./Admin_Dashboard";
+import AdminUserManagement from "./Admin_UserManagement";
+import AdminActivities from "./Admin_Activities";
+import AdminRewards from "./Admin_Rewards";
+import AdminTransactions from "./Admin_Transactions";
+import api from "../services/api";
 
 // ========================= SIDEBAR ITEMS =========================
 const navItems = [
@@ -43,25 +44,25 @@ const Admin = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   // ========================= SHARED ACTIVITIES =========================
-  const [activities, setActivities] = useState([
-    {
-      id: 1,
-      message:
-        "Runehart, Aaron Lysander Kyle successfully claimed their rewards.",
-      createdAt: "2025-10-23T11:00:00Z",
-    },
-    {
-      id: 2,
-      message:
-        "The waste bin’s capacity has reached its maximum limit. Please initiate a pickup immediately.",
-      createdAt: "2025-10-23T10:10:00Z",
-    },
-    {
-      id: 3,
-      message: "Montenegro, Jericho Jay successfully claimed their rewards.",
-      createdAt: "2025-10-23T09:30:00Z",
-    },
-  ]);
+  const [activities, setActivities] = useState([]);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [tx, disposals] = await Promise.all([
+          api.getTransactions(),
+          api.getDisposals()
+        ]);
+        if (!mounted) return;
+        const txEvents = tx.slice(0, 10).map(t => ({ id: `tx-${t.id}`, message: `${t.rewardName} redeemed (−${t.pointsUsed} pts) by user ${t.userId}`, createdAt: t.date }));
+        const disposalEvents = disposals.slice(0, 10).map(d => ({ id: `bw-${d.id}`, message: `Biowaste disposal ${d.kg}kg (+${d.pointsEarned} pts) by user ${d.userId}`, createdAt: d.createdAt }));
+        setActivities([...txEvents, ...disposalEvents]);
+      } catch (e) {
+        console.error('Failed to load activities', e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   // Sort newest to oldest every render
   const sortedActivities = [...activities].sort(
@@ -86,26 +87,26 @@ const Admin = () => {
     switch (active) {
       case "dashboard":
         return (
-          <Admin_Dashboard
+          <AdminDashboard
             setActive={goToSection}
             activities={sortedActivities}
             setActivities={setActivities}
           />
         );
       case "users":
-        return <Admin_UserManagement setActive={goToSection} />;
+        return <AdminUserManagement setActive={goToSection} />;
       case "activities":
         return (
-          <Admin_Activities
+          <AdminActivities
             setActive={goToSection}
             activities={sortedActivities}
           />
         );
       case "rewards":
-        return <Admin_Rewards setActive={goToSection} />;
+        return <AdminRewards setActive={goToSection} />;
       default:
         return (
-          <Admin_Dashboard
+          <AdminDashboard
             setActive={goToSection}
             activities={sortedActivities}
             setActivities={setActivities}
@@ -113,7 +114,7 @@ const Admin = () => {
         );
         case "transactions":
         return (
-          <Admin_Transactions
+          <AdminTransactions
             setActive={goToSection}
             activities={sortedActivities}
           />

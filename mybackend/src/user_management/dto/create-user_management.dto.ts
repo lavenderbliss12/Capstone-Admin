@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsEmail, IsNumber, IsBoolean, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateUserManagementDto {
     @IsNotEmpty()
@@ -17,9 +17,16 @@ export class CreateUserManagementDto {
     @IsString()
     password: string;
 
-
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
-    points: number;  // Added required points field
+    points?: number;
+
+    @IsOptional()
+    @IsString()
+    username?: string;
+
+    @IsOptional()
+    @IsString()
+    uid?: string;
 
 }

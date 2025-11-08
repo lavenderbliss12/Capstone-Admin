@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./Admin.css";
 import regUserLight from "../images/reg-user-1.png";
 import regUserDark from "../images/reg-user-2.png";
@@ -11,10 +11,9 @@ import sortDownDark from "../images/sort-down-dark.png";  //ASCEND A TO Z
 import dropLight from "../images/dropdown-1.png";
 import dropDark from "../images/dropdown-2.png";
 import ellipsisIcon from "../images/ellipsis-1.png";
+import api from "../services/api";
 
 function Admin_UserManagement() {
-  // API base: override with REACT_APP_PHP_API env var when running CRA dev server
-  const API_BASE = process.env.REACT_APP_PHP_API || 'http://localhost/A-INCENTIVES-CAPSTONE/src/components/php-backend/index.php';
 
   const [filter, setFilter] = useState("Course");
   const [sortOrder, setSortOrder] = useState("asc"); // asc = A-Z ; desc = Z-A
@@ -23,7 +22,7 @@ function Admin_UserManagement() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // start empty - load from PHP backend
+  // start empty - load from NestJS backend
   const [students, setStudents] = useState([]);
 
   // load/save cache key so data remains visible after browser refresh
@@ -36,9 +35,30 @@ function Admin_UserManagement() {
   const parsePoints = (p) => {
     if (p === null || p === undefined) return 0;
     if (typeof p === 'number') return p;
-    const n = parseFloat(String(p).replace(/[^0-9.\-]/g, ''));
+    const n = parseFloat(String(p).replace(/[^0-9.-]/g, ''));
     return Number.isFinite(n) ? n : 0;
   };
+
+  // Define fetchUsers before the effect so dependency works
+  const fetchUsers = useCallback(async () => {
+    try {
+      const data = await api.getUsers();
+      const mapped = data.map(u => ({
+        id: String(u.id),
+        uid: u.uid || String(u.id),
+        surname: u.surname,
+        name: u.name,
+        email: u.email,
+        course: u.course ?? '',
+        dateCreated: u.dateCreated || (u.date_registered || u.date_created || '').split('T')[0]?.replace(/-/g,'/'),
+        points: fmtPoints(u.points)
+      }));
+      setStudents(mapped);
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(mapped)); } catch (e) { /* ignore */ }
+    } catch (err) {
+      console.error('Failed to fetch users', err);
+    }
+  }, []);
 
   // Load users from cache first so UI persists between refreshes, then fetch authoritative list
   useEffect(() => {
@@ -52,30 +72,7 @@ function Admin_UserManagement() {
       // ignore malformed cache
     }
     fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/users`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      // map backend fields to UI model
-      const mapped = data.map(u => ({
-        id: String(u.id),
-        surname: u.surname,
-        name: u.name,
-        email: u.email,
-        course: u.course ?? '',
-        dateCreated: u.date_created?.split(' ')[0]?.replace(/-/g,'/') ?? (u.date ?? ''),
-        points: fmtPoints(u.points)
-      }));
-      setStudents(mapped);
-      // persist fetched users to cache so table stays on refresh
-      try { localStorage.setItem(CACHE_KEY, JSON.stringify(mapped)); } catch (e) { /* ignore */ }
-    } catch (err) {
-      console.error('Failed to fetch users', err);
-    }
-  };
+  }, [fetchUsers]);
 
   const saveCache = (arr) => {
     try { localStorage.setItem(CACHE_KEY, JSON.stringify(arr)); } catch (e) { /* ignore */ }
@@ -140,11 +137,9 @@ function Admin_UserManagement() {
   };
   const confirmRemove = () => {
     if (!confirmRemoveStudent) return;
-    // call PHP delete
     const id = confirmRemoveStudent.id;
-    fetch(`${API_BASE}/users/${id}`, { method: 'DELETE' })
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    api.deleteUser(id)
+      .then(() => {
         setStudents(prev => {
           const next = prev.filter(s => s.id !== id);
           saveCache(next);
@@ -162,7 +157,7 @@ function Admin_UserManagement() {
   const closeView = () => { setViewingStudent(null); setIsEditing(false); };
   const startEdit = () => setIsEditing(true);
   const saveEdit = (edited) => {
-    // send update to PHP backend
+    // send update to NestJS backend
     const id = edited.id;
     const body = {
       surname: edited.surname,
@@ -171,9 +166,8 @@ function Admin_UserManagement() {
       points: parsePoints(edited.points),
       course: edited.course
     };
-    fetch(`${API_BASE}/users/${id}`, { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) })
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    api.updateUser(id, body)
+      .then(() => {
         // reflect in UI and cache
         setStudents(prev => {
           const next = prev.map(s => (s.id === edited.id ? { ...edited, points: fmtPoints(parsePoints(edited.points)) } : s));
@@ -192,7 +186,7 @@ function Admin_UserManagement() {
   const openRegister = () => { setRegistering(true); setOpenMenuIndex(null); };
   const cancelRegister = () => setRegistering(false);
   const saveRegister = (newStudent) => {
-    // create on PHP backend
+    // create on NestJS backend
     const body = {
       surname: newStudent.surname,
       name: newStudent.name,
@@ -201,11 +195,10 @@ function Admin_UserManagement() {
       points: parsePoints(newStudent.points),
       course: newStudent.course
     };
-    fetch(`${API_BASE}/users`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) })
-      .then(r => r.json())
+    api.createUser(body)
       .then(res => {
         if (!res || !res.id) throw new Error('Invalid response');
-        const created = { ...newStudent, id: String(res.id), points: fmtPoints(parsePoints(newStudent.points)) };
+        const created = { ...newStudent, id: String(res.id), uid: res.uid || String(res.id), points: fmtPoints(parsePoints(newStudent.points)) };
         setStudents(prev => {
           const next = [created, ...prev];
           saveCache(next);
@@ -301,7 +294,8 @@ function Admin_UserManagement() {
         <table className="user-table">
           <thead>
             <tr>
-              <th style={{width: '12%'}}>Student ID</th>
+              {/* Renamed column label from USER_UID to UID per request */}
+              <th style={{width: '12%'}}>UID</th>
               <th style={{width: '40%'}}>Student Name</th>
               <th style={{width: '14%'}}>Course</th>
               <th style={{width: '12%'}}>Date Created</th>
@@ -313,7 +307,7 @@ function Admin_UserManagement() {
           <tbody>
             {filteredStudents.map((student, index) => (
               <tr key={student.id}>
-                <td>{student.id}</td>
+                <td>{student.uid || student.id}</td>
                 <td>{student.surname}, {student.name}</td>
                 <td>{student.course}</td>
                 <td>{student.dateCreated}</td>
@@ -324,8 +318,6 @@ function Admin_UserManagement() {
                     alt="menu"
                     className="ellipsis-icon"
                     onClick={() => setOpenMenuIndex(openMenuIndex === index ? null : index)}
-                    aria-haspopup="true"
-                    aria-expanded={openMenuIndex === index}
                   />
                   {openMenuIndex === index && (
                     <div className="ellipsis-menu" role="menu">
@@ -354,7 +346,8 @@ function Admin_UserManagement() {
             {!isEditing ? (
               <div className="modal-body modal-grid">
                 <div>
-                  <strong>ID:</strong>
+                  {/* Display label changed from ID to UID */}
+                  <strong>UID:</strong>
                   <div className="modal-val">{viewingStudent.id}</div>
                 </div>
                 <div>
@@ -381,8 +374,7 @@ function Admin_UserManagement() {
                           return next;
                         });
                         // persist change to backend
-                        fetch(`${API_BASE}/users/${updated.id}`, { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ course: nextCourse }) })
-                          .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); })
+                        api.updateUser(updated.id, { course: nextCourse })
                           .catch(err => { console.error('Failed to update course', err); showAlert('Failed to update course.'); });
                       }}
                     >
@@ -491,7 +483,8 @@ function EditStudentForm({ student, onSave, onCancel, showAlert }) {
 
   return (
     <form className="form-grid" onSubmit={handleSubmit}>
-      <label>ID<input name="id" value={form.id} onChange={handleChange} readOnly /></label>
+  {/* Input label changed from ID to UID */}
+  <label>UID<input name="id" value={form.id} onChange={handleChange} readOnly /></label>
       <label>Surname<input name="surname" value={form.surname || ""} onChange={handleChange} /></label>
       <label>Name<input name="name" value={form.name || ""} onChange={handleChange} /></label>
       <label>Email Address<input name="email" value={form.email || ""} onChange={handleChange} /></label>
@@ -542,7 +535,8 @@ function RegisterStudentForm({ onSave, onCancel, showAlert }) {
 
   return (
     <form className="form-grid" onSubmit={handleSubmit}>
-      <label>ID<input name="id" value={form.id} onChange={handleChange} readOnly /></label>
+  {/* Input label changed from ID to UID */}
+  <label>UID<input name="id" value={form.id} onChange={handleChange} readOnly /></label>
       <label>Surname<input name="surname" value={form.surname} onChange={handleChange} /></label>
       <label>Name<input name="name" value={form.name} onChange={handleChange} /></label>
       <label>Email Address<input name="email" value={form.email} onChange={handleChange} /></label>
